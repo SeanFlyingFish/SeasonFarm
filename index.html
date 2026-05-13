@@ -574,27 +574,26 @@
             margin: 20px 0;
         }
 
-        /* ============== 新增：排行榜按钮样式 ============== */
-        .rank-btn {
-            position: fixed;
-            left: 50%;
-            transform: translateX(-50%);
-            bottom: 20px;
-            padding: 12px 24px;
-            font-size: 18px;
-            font-weight: bold;
-            background: #9c27b0;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            z-index: 9999;
-            transition: 0.3s;
-        }
-        .rank-btn:hover {
-            transform: translateX(-50%) scale(1.05);
-        }
+/* 排行榜按钮 - 调整位置 */
+.rank-btn {
+    position: fixed;
+    left: calc(50% - 100px); /* 左移，给规则按钮留空间 */
+    bottom: 20px;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    background: #9c27b0;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 9999;
+    transition: 0.3s;
+}
+.rank-btn:hover {
+    transform: scale(1.05); /* 去掉 translateX(-50%)，避免位移冲突 */
+}
 
         /* ============== 新增：排行榜弹窗样式 ============== */
         .rank-modal-overlay {
@@ -670,6 +669,62 @@
         }
         .rank-win { color: #d32f2f; }
         .rank-lose { color: #666; }
+
+.rule-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 100030;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+.rule-modal-content {
+    background: #fff;
+    border: 3px solid #333;
+    border-radius: 16px;
+    width: 100%;
+    max-width: 600px;
+    padding: 25px;
+}
+.rule-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+.rule-modal-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ff9800;
+}
+
+/* 规则按钮 - 调整位置 */
+.rule-btn {
+    position: fixed;
+    left: calc(50% + 40px); /* 右移，和排行榜按钮错开 */
+    bottom: 20px;
+    padding: 12px 24px;
+    font-size: 18px;
+    font-weight: bold;
+    background: #ff9800;
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 9999;
+    transition: 0.3s;
+}
+.rule-btn:hover {
+    transform: scale(1.05); /* 去掉 translateX(-50%) */
+}
 
 /* 移动端专属重构布局 + 适配一屏 PC不变 */
 @media (max-width: 768px) {
@@ -844,18 +899,26 @@
         position: absolute;
         left: 6px;
         bottom: 6px;
-        width: 110px;
+        width: 80px;
         padding: 6px 8px;
         font-size: 12px;
     }
-    .rank-btn {
-        position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
-        bottom: 6px;
-        padding: 6px 12px;
-        font-size: 12px;
-    }
+.rank-btn {
+    position: absolute;
+    left: calc(50% - 50px); /* 移动端左移 */
+    bottom: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    transform: none; /* 清空位移 */
+}
+.rule-btn {
+    position: absolute;
+    left: calc(50% + 10px); /* 移动端右移 */
+    bottom: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    transform: none; /* 清空位移 */
+}
     .next-month-btn {
         position: absolute;
         right: 6px;
@@ -969,8 +1032,9 @@
     </div>
 
     <!-- 固定底部：金币 + 排行榜 + 下一月 -->
-    <div class="gold-panel">💰 金币：<span id="goldNum">20</span></div>
-    <button class="rank-btn" id="rankBtn">🏆 排行榜</button>
+    <div class="gold-panel">金币：<span id="goldNum">20</span></div>
+    <button class="rank-btn" id="rankBtn">排行榜</button>
+    <button class="rule-btn" id="ruleBtn"> 规则</button>
     <button class="next-month-btn" id="btnNextMonth" disabled>▶ 下一月 (0/3)</button>
 
     <div class="effects-container">
@@ -1022,6 +1086,38 @@
             <div class="rank-list" id="rankList"></div>
         </div>
     </div>
+
+<!-- 规则弹窗 -->
+<div class="rule-modal-overlay" id="ruleModalOverlay">
+    <div class="rule-modal-content">
+        <div class="rule-modal-header">
+            <div class="rule-modal-title">游戏规则</div>
+            <button class="close-modal-btn" id="closeRuleModal">×</button>
+        </div>
+        <div class="rule-body" style="padding:15px; line-height:1.8; font-size:14px; color:#333;">
+            <p><strong>游戏目标：</strong>经营3年农场，尽可能多地获得金币。</p>
+            <p>&nbsp;</p>
+            <p><strong>回合流程（每月流程）：</strong></p>
+            <p>1. 使土地中的所有骰子点数+1，与当前月份颜色一致的骰子点数额外+1；</p>
+            <p>2. 随机投掷【价格骰】（白色）与【需求骰】（紫色），并产生本月需求；</p>
+            <p>3. 将玩家行动次数调整为上限（初始为3）；</p>
+            <p>4. 玩家自由行动，当且仅当玩家使用完所有行动次数时（没事做可以多浇水），进入下一月；</p>
+            <p>5. 进入下一月时，若本月需求未被满足，将下一月中的步骤1改为：使土地中的所有骰子点数-1。</p>
+            <p>&nbsp;</p>
+            <p><strong>玩家行动：</strong></p>
+            <p>1. 种植：点击右侧供应堆骰子，再点击左侧空白土地，消耗【价格骰点数】的金币完成种植；</p>
+            <p>2. 出售：点击土地上点数大于1的骰子，获得【骰子点数】的金币；</p>
+            <p>（若当前月份中有骰子颜色方块的调整信息，出售这些骰子可以获得【骰子点数-2 / +2 / ×2】的金币）</p>
+            <p>3. 农作：点击对应按钮，执行浇水/除虫/施肥/解锁土地；</p>
+            <p>（解锁土地时，会解锁1个全局增益效果）</p>
+            <p>※ 点击左上角当前年月，可以查看全年月份信息。</p>
+            <p>&nbsp;</p>
+            <p><strong>胜负条件：</strong></p>
+            <p>玩家无法进行行动时，游戏失败。</p>
+            <p>游戏进行到第3年12月结束时，会按照1月情况自动出售土地中的所有骰子，得出最终得分（金币）。</p>
+        </div>
+    </div>
+</div>
 
     <script>
         // ============== 新增：本地存储常量 ==============
@@ -1833,6 +1929,25 @@ selectedDice = null;
             saveGameState();
         }
 
+// ======================
+// 【新增：移动端点击空白区域取消骰子选中】
+// ======================
+document.addEventListener('click', (e) => {
+  // 没有选中的骰子，直接返回
+  if (!selectedDice) return;
+  
+  // 判断点击的是否是 骰子/土地 区域
+  const clickDice = e.target.closest('.dice');
+  const clickLand = e.target.closest('.land');
+  
+  // 点击空白区域（非骰子、非土地），取消选中
+  if (!clickDice && !clickLand) {
+    selectedDice.style.transform = '';
+    selectedDice.style.boxShadow = '';
+    selectedDice = null;
+  }
+});
+
         function openMonthModal() {
             if(gameOver || gameFinish) return;
             renderMonthList();
@@ -1877,6 +1992,21 @@ selectedDice = null;
                 document.getElementById('rankModalOverlay').style.display = 'none';
             }
         };
+
+// 规则按钮点击
+document.getElementById('ruleBtn').onclick = () => {
+    document.getElementById('ruleModalOverlay').style.display = 'flex';
+};
+// 关闭规则弹窗
+document.getElementById('closeRuleModal').onclick = () => {
+    document.getElementById('ruleModalOverlay').style.display = 'none';
+};
+// 点击遮罩关闭规则弹窗
+document.getElementById('ruleModalOverlay').onclick = (e) => {
+    if(e.target === document.getElementById('ruleModalOverlay')){
+        document.getElementById('ruleModalOverlay').style.display = 'none';
+    }
+};
 
         function initGame() {
             loadGameState(); // 加载缓存
