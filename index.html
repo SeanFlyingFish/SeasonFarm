@@ -1,0 +1,1909 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>四季农场</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            padding: 20px;
+            background: #f6f2e8;
+            padding-bottom: 120px;
+        }
+
+        .top-main-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            width: 100%;
+            margin-bottom: 20px;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .top-left-month {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .top-middle-rules {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            flex: 1;
+            justify-content: center;
+        }
+        .year-rule-box {
+            background: #fff;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 12px 16px;
+            font-size: 14px;
+            line-height: 2.2;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+            min-width: 220px;
+        }
+        .rule-line {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .tag-black {
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 14px;
+            border: 2px solid #ffffff;
+            background: #222;
+            color: #fff;
+            white-space: nowrap;
+        }
+
+        .tip-dice {
+            width: 26px;
+            height: 26px;
+            border-radius: 6px;
+            border: 2px solid #222;
+            background: #8e44ad;
+            display: inline-grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            padding: 2px;
+            gap: 1px;
+            vertical-align: middle;
+        }
+        .tip-dice .dot {
+            width: 5px;
+            height: 5px;
+            background: #111;
+            border-radius: 50%;
+            margin: auto;
+        }
+        .tip-dice .dot-empty { background: transparent; }
+
+        .current-need-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            margin: 10px 0 30px 0;
+        }
+        .hide-need {
+            display: none;
+        }
+
+        .top-right-dice {
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .right-top {
+            padding: 16px 24px;
+            background: #e9e2d5;
+            border-radius: 12px;
+        }
+        .fixed-dice-area {
+            display: flex;
+            gap: 24px;
+        }
+
+        .gold-panel {
+            padding: 12px 20px;
+            background: #ffd700;
+            border-radius: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #8b4513;
+            border: 2px solid #b8860b;
+            width: 180px;
+            position: fixed;
+            left: 20px;
+            bottom: 20px;
+            z-index: 9998;
+        }
+
+        .month-box {
+            width: 180px;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #333;
+            color: #fff;
+            font-weight: bold;
+            text-align: center;
+            font-size: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            cursor: pointer;
+        }
+        .month-tag {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            margin: 0 auto;
+            width: fit-content;
+            border: 2px solid #ffffff;
+        }
+        .tag-red { background: #d32f2f; color: #fff; }
+        .tag-green { background: #388e3c; color: #fff; }
+
+        .month-bonus {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 16px;
+        }
+        .bonus-block {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            border: 2px solid #fff;
+        }
+        .block-green { background: #388e3c; }
+        .block-red { background: #d32f2f; }
+        .block-blue { background: #4285f4; }
+        .block-yellow { background: #fbc02d; }
+
+        .month-blue { background: #4285f4; }
+        .month-green { background: #388e3c; }
+        .month-red { background: #d32f2f; }
+        .month-yellow { background: #fbc02d; color: #333; }
+
+        .game-center {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+        .land-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .func-btn {
+            width: 90px;
+            height: 70px;
+            padding: 8px 5px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #579e4f;
+            color: #fff;
+            transition: 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            line-height: 1.2;
+        }
+        .func-btn .small-price {
+            font-size: 12px;
+            opacity: 0.85;
+            margin-top: 4px;
+        }
+        .func-btn:disabled {
+            background: #aaa;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        .func-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+        }
+
+        .dice-supply-wrap {
+            padding: 20px;
+            background: #e1eddb;
+            border-radius: 12px;
+            border: 2px solid #579e4f;
+            min-width: 260px;
+        }
+        .dice-supply-title {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .dice-color-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            background: #f0f5f0;
+            min-height: 70px;
+        }
+        .dice-row-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .land-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 12px;
+        }
+        .land {
+            width: 105px;
+            height: 105px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .land-open { background: #b8e1b3; border: 2px solid #579e4f; }
+        .land-lock { background: #c9c9c9; border: 2px solid #999; }
+        .land-unlocked { background: #b8e1b3; border: 2px solid #579e4f; animation: unlock 0.5s; }
+        @keyframes unlock {
+            0% { transform: scale(0.9); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .land:hover:not(.land-lock) {
+            transform: scale(1.05);
+        }
+
+        .dice {
+            width: 56px;
+            height: 56px;
+            border-radius: 10px;
+            border: 2px solid #222;
+            box-shadow: 2px 2px 6px rgba(0,0,0,0.25);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            padding: 6px;
+            gap: 2px;
+            cursor: grab;
+            transition: 0.2s;
+            position: relative;
+            touch-action: none;
+          -webkit-tap-highlight-color: transparent;
+        }
+        .land .dice {
+            cursor: pointer;
+            width: 85px;
+            height: 85px;
+        }
+        .dice.fixed-dice { cursor: default; }
+        .dice.dragging { opacity: 0.4; }
+        .dice:hover:not(.fixed-dice):not(.dragging) {
+            transform: scale(1.1);
+        }
+        .dice.upgradeable {
+            box-shadow: 0 0 15px 5px #ffd700;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 15px 5px #ffd700; }
+            50% { box-shadow: 0 0 20px 8px #ffd700; }
+            100% { box-shadow: 0 0 15px 5px #ffd700; }
+        }
+
+        .dice-red { background: #e53935; }
+        .dice-yellow { background: #fdd835; }
+        .dice-blue { background: #1e88e5; }
+        .dice-green { background: #43a047; }
+        .dice-white { background: #ffffff; }
+        .dice-purple { background: #8e44ad; }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #111;
+            margin: auto;
+        }
+        .dot-empty { background: transparent; }
+
+        .price-discount {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            background: #d32f2f;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            padding: 2px 4px;
+            border-radius: 4px;
+            display: none;
+            z-index: 10;
+        }
+
+        .effects-container {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 9998;
+        }
+        .effect-box {
+            padding: 8px 12px;
+            background: #e0e0e0;
+            border: 2px solid #9e9e9e;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #333;
+            min-width: 220px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .effect-box-active {
+            background: #579e4f;
+            color: #ffffff;
+            border-color: #3d7a37;
+        }
+
+        .next-month-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            background: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: default;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 9999;
+            transition: 0.3s;
+        }
+        .next-month-btn:disabled {
+            background: #2196F3;
+            opacity: 1;
+        }
+
+        /* 游戏失败弹窗 */
+        .game-over-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+        }
+        .game-over-content {
+            background: #fff;
+            padding: 40px 60px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .game-over-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #d32f2f;
+            margin-bottom: 20px;
+        }
+        .game-over-text {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .restart-btn {
+            padding: 12px 32px;
+            font-size: 18px;
+            font-weight: bold;
+            background: #579e4f;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .restart-btn:hover {
+            background: #3d7a37;
+            transform: scale(1.05);
+        }
+
+        /* 12个月详情弹窗 */
+        .month-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 100000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .month-modal-content {
+            background: #fff;
+            border: 3px solid #333;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .month-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .month-modal-title {
+            font-size: 22px;
+            font-weight: bold;
+            color: #333;
+        }
+        .close-modal-btn {
+            background: #d32f2f;
+            color: #fff;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .month-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+        .month-item {
+            border: 2px solid #333;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            color: #fff;
+            font-weight: bold;
+        }
+        .month-item-name {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .month-item-tag {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin: 4px auto;
+            width: fit-content;
+            border: 1px solid #fff;
+        }
+        .month-item-bonus {
+            font-size: 14px;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        /* 最终成绩结算弹窗 */
+        .score-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.75);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100010;
+            padding: 20px;
+        }
+        .score-modal-content {
+            background: #fff;
+            border: 3px solid #333;
+            border-radius: 16px;
+            padding: 30px 40px;
+            text-align: center;
+            min-width: 320px;
+        }
+        .score-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #222;
+            margin-bottom: 25px;
+        }
+        .score-row {
+            font-size: 18px;
+            color: #333;
+            margin: 12px 0;
+        }
+        .score-final {
+            font-size: 22px;
+            font-weight: bold;
+            color: #d32f2f;
+            margin: 20px 0;
+        }
+
+        /* ============== 新增：排行榜按钮样式 ============== */
+        .rank-btn {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 20px;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            background: #9c27b0;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 9999;
+            transition: 0.3s;
+        }
+        .rank-btn:hover {
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        /* ============== 新增：排行榜弹窗样式 ============== */
+        .rank-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 100020;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .rank-modal-content {
+            background: #fff;
+            border: 3px solid #333;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 25px;
+        }
+        .rank-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        .rank-modal-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #9c27b0;
+        }
+        .rank-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .rank-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+        .rank-num {
+            font-size: 20px;
+            font-weight: bold;
+            width: 40px;
+            text-align: center;
+        }
+        .rank-1 { color: #FFD700; text-shadow: 0 0 2px #000; }
+        .rank-2 { color: #C0C0C0; text-shadow: 0 0 2px #000; }
+        .rank-3 { color: #CD7F32; text-shadow: 0 0 2px #000; }
+        .rank-data {
+            flex: 1;
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+        }
+        .rank-result {
+            font-size: 18px;
+            font-weight: bold;
+            min-width: 120px;
+            text-align: right;
+        }
+        .rank-win { color: #d32f2f; }
+        .rank-lose { color: #666; }
+
+/* 移动端专属重构布局 + 适配一屏 PC不变 */
+@media (max-width: 768px) {
+    body {
+        height: 100vh;
+        overflow: hidden;
+        padding: 6px;
+        font-size: 11px;
+    }
+
+    /* 1. 顶部第一行：左上年月 右上双骰子 */
+    .top-main-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: nowrap;
+        margin-bottom: 6px;
+        gap: 0;
+    }
+    .top-middle-rules {
+        /* 第一行隐藏规则盒子，挪到第二行 */
+        display: none;
+    }
+    .top-left-month {
+        align-items: center;
+    }
+    .top-right-dice {
+        align-items: center;
+    }
+    .right-top {
+        padding: 4px 8px;
+    }
+    .fixed-dice-area {
+        gap: 10px;
+    }
+
+    /* 2. 新增第二行：1-3年规则 两端对齐整行 */
+    .rule-row-mobile {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        gap: 4px;
+        margin-bottom: 8px;
+    }
+    .rule-row-mobile .year-rule-box {
+        flex: 1;
+        min-width: unset;
+        padding: 4px 2px;
+        font-size: 9px;
+        line-height: 1.3;
+    }
+    .tag-black {
+        font-size: 9px;
+        padding: 1px 2px;
+    }
+    .tip-dice {
+        width: 16px;
+        height: 16px;
+    }
+    .tip-dice .dot {
+        width: 3px;
+        height: 3px;
+    }
+
+    /* 年月盒子缩小 */
+    .month-box {
+        width: 90px;
+        padding: 6px 4px;
+        font-size: 12px;
+        gap: 4px;
+    }
+    .month-tag {
+        font-size: 10px;
+        padding: 1px 4px;
+    }
+    .month-bonus {
+        font-size: 10px;
+        gap: 2px;
+    }
+    .bonus-block {
+        width: 14px;
+        height: 14px;
+    }
+
+    /* 当前需求提示 */
+    .current-need-wrap {
+        font-size: 11px;
+        margin: 2px 0 6px;
+    }
+
+    /* 中间游戏区：土地 + 供应堆 紧凑并排 */
+    .game-center {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 8px;
+    }
+    .land-section {
+        gap: 8px;
+    }
+    .land-grid {
+        gap: 8px;
+    }
+    .land {
+        width: 65px;
+        height: 65px;
+    }
+    .land .dice {
+        width: 50px;
+        height: 50px;
+    }
+
+    /* 功能按钮缩小 */
+    .btn-group {
+        gap: 5px;
+    }
+    .func-btn {
+        width: 60px;
+        height: 42px;
+        font-size: 11px;
+        padding: 2px;
+    }
+    .func-btn .small-price {
+        font-size: 8px;
+    }
+
+    /* 骰子供应堆压缩 */
+    .dice-supply-wrap {
+        padding: 6px;
+        min-width: 160px;
+    }
+    .dice-supply-title {
+        font-size: 12px;
+        margin-bottom: 6px;
+    }
+    .dice-color-row {
+        padding: 4px;
+        min-height: 42px;
+        gap: 4px;
+    }
+    .dice-row-container {
+        gap: 4px;
+    }
+    .dice {
+        width: 32px;
+        height: 32px;
+        padding: 2px;
+    }
+    .dot {
+        width: 6px;
+        height: 6px;
+    }
+
+    /* 右侧效果悬浮栏 改位置不遮挡 */
+    .effects-container {
+        position: static;
+        width: 100%;
+        flex-direction: row;
+        justify-content: center;
+        margin-bottom: 6px;
+        gap: 4px;
+    }
+    .effect-box {
+        font-size: 9px;
+        padding: 2px 4px;
+        min-width: unset;
+    }
+
+    /* 底部整行布局：左金币 中排行榜 右下一月+状态 */
+    .gold-panel {
+        position: absolute;
+        left: 6px;
+        bottom: 6px;
+        width: 110px;
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+    .rank-btn {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        bottom: 6px;
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+    .next-month-btn {
+        position: absolute;
+        right: 6px;
+        bottom: 6px;
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    /* 弹窗适配 */
+    .game-over-title { font-size: 20px; }
+    .game-over-text { font-size: 12px; }
+
+    /* 年月弹窗3列4行布局 */
+    .month-list {
+        grid-template-columns: repeat(3, 1fr); /* 3列等分 */
+        grid-template-rows: repeat(4, 1fr);    /* 4行等分 */
+        gap: 10px;
+    }
+    .month-item {
+        padding: 8px;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+}
+    </style>
+</head>
+<body>
+    <div class="top-main-container">
+        <div class="top-left-month">
+            <div class="month-box" id="monthBox">
+                <div id="yearMonthText">第1年1月</div>
+                <div class="month-tag" id="monthTag">施肥</div>
+                <div class="month-bonus" id="monthBonus"></div>
+            </div>
+        </div>
+
+        <div class="top-middle-rules">
+            <div class="year-rule-box">
+                <div>第1年</div>
+                <div class="rule-line"><span class="tag-black">浇水</span>：<div class="tip-dice" data-point="1"></div>、<div class="tip-dice" data-point="6"></div></div>
+                <div class="rule-line"><span class="tag-black">除虫</span>：<div class="tip-dice" data-point="3"></div></div>
+                <div class="rule-line"><span class="tag-black">施肥</span>：<div class="tip-dice" data-point="5"></div></div>
+            </div>
+            <div class="year-rule-box">
+                <div>第2年</div>
+                <div class="rule-line"><span class="tag-black">浇水</span>：<div class="tip-dice" data-point="1"></div></div>
+                <div class="rule-line"><span class="tag-black">除虫</span>：<div class="tip-dice" data-point="3"></div>、<div class="tip-dice" data-point="4"></div></div>
+                <div class="rule-line"><span class="tag-black">施肥</span>：<div class="tip-dice" data-point="5"></div></div>
+            </div>
+            <div class="year-rule-box">
+                <div>第3年</div>
+                <div class="rule-line"><span class="tag-black">浇水</span>：<div class="tip-dice" data-point="1"></div></div>
+                <div class="rule-line"><span class="tag-black">除虫</span>：<div class="tip-dice" data-point="3"></div></div>
+                <div class="rule-line"><span class="tag-black">施肥</span>：<div class="tip-dice" data-point="2"></div>、<div class="tip-dice" data-point="5"></div></div>
+            </div>
+        </div>
+
+        <div class="top-right-dice">
+            <div class="right-top">
+                <div class="fixed-dice-area" id="fixedDice"></div>
+            </div>
+        </div>
+    </div>
+
+<div class="rule-row-mobile">
+  <div class="year-rule-box">
+    <div>第1年</div>
+    <div class="rule-line"><span class="tag-black">浇水</span>：<div class="tip-dice" data-point="1"></div>、<div class="tip-dice" data-point="6"></div></div>
+    <div class="rule-line"><span class="tag-black">除虫</span>：<div class="tip-dice" data-point="3"></div></div>
+    <div class="rule-line"><span class="tag-black">施肥</span>：<div class="tip-dice" data-point="5"></div></div>
+  </div>
+  <div class="year-rule-box">
+    <div>第2年</div>
+    <div class="rule-line"><span class="tag-black">浇水</span>：<div class="tip-dice" data-point="1"></div></div>
+    <div class="rule-line"><span class="tag-black">除虫</span>：<div class="tip-dice" data-point="3"></div>、<div class="tip-dice" data-point="4"></div></div>
+    <div class="rule-line"><span class="tag-black">施肥</span>：<div class="tip-dice" data-point="5"></div></div>
+  </div>
+  <div class="year-rule-box">
+    <div>第3年</div>
+    <div class="rule-line"><span class="tag-black">浇水</span>：<div class="tip-dice" data-point="1"></div></div>
+    <div class="rule-line"><span class="tag-black">除虫</span>：<div class="tip-dice" data-point="3"></div></div>
+    <div class="rule-line"><span class="tag-black">施肥</span>：<div class="tip-dice" data-point="2"></div>、<div class="tip-dice" data-point="5"></div></div>
+  </div>
+</div>
+
+    <div class="current-need-wrap hide-need" id="currentNeedBox">
+        <span>当前需求：</span>
+        <span class="tag-black" id="needText"></span>
+    </div>
+
+    <div class="game-center">
+        <div class="land-section">
+            <div class="land-grid" id="landGrid"></div>
+            <div class="btn-group">
+                <button class="func-btn" id="btnWater">浇水<span class="small-price"></span></button>
+                <button class="func-btn" id="btnBug">除虫<span class="small-price"></span></button>
+                <button class="func-btn" id="btnFertilize">施肥<span class="small-price"></span></button>
+                <button class="func-btn" id="btnUnlock">解锁土地<span class="small-price">20金币</span></button>
+            </div>
+        </div>
+        <div class="dice-supply-wrap">
+            <div class="dice-supply-title">作物骰子供应堆</div>
+            <div class="dice-color-row"><div class="dice-row-container" id="diceRowRed"></div></div>
+            <div class="dice-color-row"><div class="dice-row-container" id="diceRowYellow"></div></div>
+            <div class="dice-color-row"><div class="dice-row-container" id="diceRowBlue"></div></div>
+            <div class="dice-color-row"><div class="dice-row-container" id="diceRowGreen"></div></div>
+        </div>
+    </div>
+
+    <!-- 固定底部：金币 + 排行榜 + 下一月 -->
+    <div class="gold-panel">💰 金币：<span id="goldNum">20</span></div>
+    <button class="rank-btn" id="rankBtn">🏆 排行榜</button>
+    <button class="next-month-btn" id="btnNextMonth" disabled>▶ 下一月 (0/3)</button>
+
+    <div class="effects-container">
+        <div class="effect-box">价格骰点数-1</div>
+        <div class="effect-box">行动次数+1</div>
+        <div class="effect-box">额外农作后，使1个骰子点数+1</div>
+        <div class="effect-box">月份同色骰子售价+2</div>
+    </div>
+
+    <div class="game-over-modal" id="gameOverModal">
+        <div class="game-over-content">
+            <div class="game-over-title">游戏失败</div>
+            <div class="game-over-text">你已经没有任何可以进行的操作了</div>
+            <button class="restart-btn" id="restartBtn">重新开始</button>
+        </div>
+    </div>
+
+    <div class="month-modal-overlay" id="monthModalOverlay">
+        <div class="month-modal-content">
+            <div class="month-modal-header">
+                <div class="month-modal-title">全年12个月详情</div>
+                <button class="close-modal-btn" id="closeMonthModal">×</button>
+            </div>
+            <div class="month-list" id="monthList"></div>
+        </div>
+    </div>
+
+    <div class="score-modal-overlay" id="scoreModalOverlay">
+        <div class="score-modal-content">
+            <div class="score-title">游戏结算成绩</div>
+            <div class="score-row" id="scoreLand"></div>
+            <div class="score-row" id="scoreRed"></div>
+            <div class="score-row" id="scoreYellow"></div>
+            <div class="score-row" id="scoreBlue"></div>
+            <div class="score-row" id="scoreGreen"></div>
+            <div class="score-row" id="scoreGold"></div>
+            <div class="score-final" id="scoreFinal"></div>
+            <button class="restart-btn" id="scoreRestartBtn">重新开始</button>
+        </div>
+    </div>
+
+    <!-- ============== 新增：排行榜弹窗 ============== -->
+    <div class="rank-modal-overlay" id="rankModalOverlay">
+        <div class="rank-modal-content">
+            <div class="rank-modal-header">
+                <div class="rank-modal-title">四季农场 排行榜</div>
+                <button class="close-modal-btn" id="closeRankModal">×</button>
+            </div>
+            <div class="rank-list" id="rankList"></div>
+        </div>
+    </div>
+
+    <script>
+        // ============== 新增：本地存储常量 ==============
+        const STORAGE_KEY = 'FARM_GAME_SAVE';
+        const RANK_KEY = 'FARM_GAME_RANK';
+
+        // 全局游戏数据（原始代码，无修改）
+        let gold = 20;
+        let nextUnlockIndex = 4;
+        let currentYear = 1;
+        let currentMonth = 1;
+        let isDragging = false;
+        let gameOver = false;
+        let gameFinish = false;
+        
+        let selectedDice = null;
+        const isMobileDevice = window.innerWidth <= 768;
+
+        let currentActions = 0;
+        let maxActions = 3;
+        let canUpgradeDice = false;
+
+        let plantCount = { red:0, yellow:0, blue:0, green:0 };
+
+        const yearTaskRule = {
+            1: { water:[1,6], bug:[3], fertilize:[5] },
+            2: { water:[1], bug:[3,4], fertilize:[5] },
+            3: { water:[1], bug:[3], fertilize:[5,2] }
+        };
+
+        const currentNeedBox = document.getElementById('currentNeedBox');
+        const needText = document.getElementById('needText');
+        let nowNeedType = '';
+
+        let whiteDiceEl = null;
+        let purpleDiceEl = null;
+
+        const basePrice = { water: 1, bug: 3, fertilize: 5, unlock: 20 };
+        const monthConfig = {
+            1:  { bg:'month-blue', tag:'red', action:'fertilize', text:'施肥', bonusColor:'green', op:'×2' },
+            2:  { bg:'month-blue', tag:'red', action:'water',    text:'浇水', bonusColor:'red',   op:'+2' },
+            3:  { bg:'month-green',tag:'green',action:'water',  text:'浇水', bonusColor:'blue',  op:'-2' },
+            4:  { bg:'month-green',tag:'red', action:'fertilize',text:'施肥',bonusColor:'red',   op:'×2' },
+            5:  { bg:'month-green',tag:'red', action:'bug',      text:'除虫',bonusColor:'yellow',op:'+2' },
+            6:  { bg:'month-red',  tag:'green',action:'fertilize',text:'施肥',bonusColor:'green', op:'-2' },
+            7:  { bg:'month-red',  tag:'red', action:'bug',      text:'除虫',bonusColor:'yellow',op:'×2' },
+            8:  { bg:'month-red',  tag:'red', action:'water',    text:'浇水',bonusColor:'blue',  op:'+2' },
+            9:  { bg:'month-yellow',tag:'green',action:'water',  text:'浇水', bonusColor:'red',   op:'-2' },
+            10: { bg:'month-yellow',tag:'red', action:'fertilize',text:'施肥',bonusColor:'blue',  op:'×2' },
+            11: { bg:'month-yellow',tag:'red', action:'water',    text:'浇水',bonusColor:'green', op:'+2' },
+            12: { bg:'month-blue',  tag:'green',action:'bug',     text:'除虫',bonusColor:'yellow',op:'-2' }
+        };
+
+        const colorToContainer = { red: 'diceRowRed', yellow: 'diceRowYellow', blue: 'diceRowBlue', green: 'diceRowGreen' };
+        const bgToColor = { 'month-blue':'blue', 'month-green':'green', 'month-red':'red', 'month-yellow':'yellow' };
+        const diceConfig = [
+            { color: 'red', count: 3, container: 'diceRowRed' },
+            { color: 'yellow', count: 3, container: 'diceRowYellow' },
+            { color: 'blue', count: 3, container: 'diceRowBlue' },
+            { color: 'green', count: 3, container: 'diceRowGreen' }
+        ];
+        const dotPos = {1: [4],2: [0,8],3: [0,4,8],4: [0,2,6,8],5: [0,2,4,6,8],6: [0,1,2,6,7,8]};
+
+        const goldNumEl = document.getElementById('goldNum');
+        const btnWater = document.getElementById('btnWater');
+        const btnBug = document.getElementById('btnBug');
+        const btnFertilize = document.getElementById('btnFertilize');
+        const btnUnlock = document.getElementById('btnUnlock');
+        const btnNextMonth = document.getElementById('btnNextMonth');
+        const monthBox = document.getElementById('monthBox');
+        const yearMonthText = document.getElementById('yearMonthText');
+        const monthTag = document.getElementById('monthTag');
+        const monthBonus = document.getElementById('monthBonus');
+        const gameOverModal = document.getElementById('gameOverModal');
+        const restartBtn = document.getElementById('restartBtn');
+        let allLands = [];
+
+        const monthModalOverlay = document.getElementById('monthModalOverlay');
+        const closeMonthModal = document.getElementById('closeMonthModal');
+        const monthList = document.getElementById('monthList');
+
+        const scoreModalOverlay = document.getElementById('scoreModalOverlay');
+        const scoreLand = document.getElementById('scoreLand');
+        const scoreRed = document.getElementById('scoreRed');
+        const scoreYellow = document.getElementById('scoreYellow');
+        const scoreBlue = document.getElementById('scoreBlue');
+        const scoreGreen = document.getElementById('scoreGreen');
+        const scoreGold = document.getElementById('scoreGold');
+        const scoreFinal = document.getElementById('scoreFinal');
+        const scoreRestartBtn = document.getElementById('scoreRestartBtn');
+
+        // ============== 新增：游戏状态缓存函数 ==============
+        function saveGameState() {
+            const state = {
+                gold, nextUnlockIndex, currentYear, currentMonth,
+                currentActions, maxActions, gameOver, gameFinish,
+                plantCount, nowNeedType
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        }
+
+        function loadGameState() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if(!data) return;
+            const save = JSON.parse(data);
+            gold = save.gold;
+            nextUnlockIndex = save.nextUnlockIndex;
+            currentYear = save.currentYear;
+            currentMonth = save.currentMonth;
+            currentActions = save.currentActions;
+            maxActions = save.maxActions;
+            gameOver = save.gameOver;
+            gameFinish = save.gameFinish;
+            plantCount = save.plantCount;
+            nowNeedType = save.nowNeedType;
+        }
+
+        // ============== 新增：排行榜功能 ==============
+        function getRankList() {
+            return JSON.parse(localStorage.getItem(RANK_KEY)) || [];
+        }
+
+        function saveRankList(list) {
+            localStorage.setItem(RANK_KEY, JSON.stringify(list));
+        }
+
+        function addRankRecord(isWin) {
+            const list = getRankList();
+            const record = {
+                isWin,
+                score: isWin ? gold : 0,
+                land: nextUnlockIndex - 4,
+                red: plantCount.red, yellow: plantCount.yellow,
+                blue: plantCount.blue, green: plantCount.green,
+                endYear: currentYear, endMonth: currentMonth
+            };
+            list.push(record);
+            list.sort((a, b) => {
+            // 1. 胜利对局 永远排在 失败对局前面
+              if (a.isWin && !b.isWin) return -1;
+              if (!a.isWin && b.isWin) return 1;
+              // 2. 都是胜利：按得分从高到低
+              if (a.isWin && b.isWin) return b.score - a.score;
+              // 3. 都是失败：按结束年月越大越靠前（年份优先，再月份）
+              return (b.endYear * 100 + b.endMonth) - (a.endYear * 100 + a.endMonth);
+            });
+            saveRankList(list.slice(0,10));
+        }
+
+        function renderRankList() {
+            const list = getRankList();
+            const container = document.getElementById('rankList');
+            container.innerHTML = list.length === 0 ? '<div style="text-align:center;padding:20px">暂无记录</div>' : '';
+            
+            list.forEach((item, i) => {
+                const dom = document.createElement('div');
+                dom.className = 'rank-item';
+                dom.innerHTML = `
+                    <div class="rank-num rank-${i+1}">${i+1}</div>
+                    <div class="rank-data">土地:${item.land} | 红:${item.red} 黄:${item.yellow} 蓝:${item.blue} 绿:${item.green}</div>
+                    <div class="rank-result ${item.isWin ? 'rank-win' : 'rank-lose'}">
+                        ${item.isWin ? `得分:${item.score}` : `第${item.endYear}年${item.endMonth}月`}
+                    </div>
+                `;
+                container.appendChild(dom);
+            });
+        }
+
+        // 原始游戏逻辑（完全无修改）
+        function checkGameOver() {
+            if (gameOver || gameFinish) return;
+            if (canUpgradeDice) return;
+
+            const baseCost = parseInt(whiteDiceEl.dataset.point);
+            const hasDiscount = document.querySelectorAll('.effect-box')[0].classList.contains('effect-box-active');
+            const buyDiceCost = hasDiscount ? Math.max(baseCost - 1, 1) : baseCost;
+            const condCannotBuyDice = gold < buyDiceCost;
+
+            const pWater = getPrice('water');
+            const pBug = getPrice('bug');
+            const pFer = getPrice('fertilize');
+            const condCannotFarm = pWater > gold && pBug > gold && pFer > gold;
+
+            const condHasRemainingActions = currentActions < maxActions;
+
+            let hasSellableDice = false;
+            allLands.forEach(land => {
+                if (land.dataset.used === 'true') {
+                    const dice = land.querySelector('.dice');
+                    if (dice && parseInt(dice.dataset.point) > 1) {
+                        hasSellableDice = true;
+                    }
+                }
+            });
+            const condNoSellableDice = !hasSellableDice;
+
+            if (condCannotBuyDice && condCannotFarm && condHasRemainingActions && condNoSellableDice) {
+                gameOver = true;
+                addRankRecord(false); // 失败记录排行榜
+                gameOverModal.style.display = 'flex';
+                saveGameState();
+            }
+        }
+
+        function updateActionCounter() {
+            btnNextMonth.textContent = `▶ 下一月 (${currentActions}/${maxActions})`;
+        }
+
+        function consumeAction() {
+            if (gameOver || gameFinish || currentActions >= maxActions) return;
+            currentActions++;
+            updateActionCounter();
+            if(currentActions === maxActions) {
+                if (!canUpgradeDice) {
+                    setTimeout(() => {
+                        goToNextMonth();
+                    }, 300);
+                }
+            } else {
+                checkGameOver();
+            }
+            saveGameState();
+        }
+
+        function renderTipDice() {
+            const tipDices = document.querySelectorAll('.tip-dice');
+            tipDices.forEach(dice => {
+                const point = parseInt(dice.dataset.point);
+                dice.innerHTML = '';
+                for(let i=0; i<9; i++) {
+                    const span = document.createElement('span');
+                    span.className = dotPos[point].includes(i) ? 'dot' : 'dot-empty';
+                    dice.appendChild(span);
+                }
+            });
+        }
+
+        function clearCurrentNeed(){
+            nowNeedType = '';
+            currentNeedBox.classList.add('hide-need');
+            needText.innerText = '';
+        }
+
+        function refreshYearNeed(){
+            if(!purpleDiceEl) return;
+            let year = Math.min(currentYear, 3);
+            let pPoint = parseInt(purpleDiceEl.dataset.point);
+            let rule = yearTaskRule[year];
+            nowNeedType = '';
+            let needTextStr = '';
+            if(rule.water.includes(pPoint)){ needTextStr = '浇水'; nowNeedType = 'water'; }
+            else if(rule.bug.includes(pPoint)){ needTextStr = '除虫'; nowNeedType = 'bug'; }
+            else if(rule.fertilize.includes(pPoint)){ needTextStr = '施肥'; nowNeedType = 'fertilize'; }
+            if(needTextStr){
+                needText.innerText = needTextStr;
+                currentNeedBox.classList.remove('hide-need');
+            }else{
+                clearCurrentNeed();
+            }
+        }
+
+        function getRandom1To6(){ return Math.floor(Math.random()*6)+1; }
+
+        function updateDicePoint(diceEl, newPoint){
+            newPoint = Math.min(newPoint, 6);
+            diceEl.dataset.point = newPoint;
+            diceEl.innerHTML = '';
+            for(let i = 0; i < 9; i++) {
+                const span = document.createElement('span');
+                span.className = dotPos[newPoint].includes(i) ? 'dot' : 'dot-empty';
+                diceEl.appendChild(span);
+            }
+            if(diceEl === whiteDiceEl) {
+                const discountTag = document.createElement('span');
+                discountTag.className = 'price-discount';
+                discountTag.textContent = '-1';
+                if(document.querySelectorAll('.effect-box')[0].classList.contains('effect-box-active')) {
+                    discountTag.style.display = 'block';
+                }
+                diceEl.appendChild(discountTag);
+            }
+            if(diceEl === purpleDiceEl){ refreshYearNeed(); }
+            saveGameState();
+        }
+
+        function calcSellGold(basePoint, diceColor, month = currentMonth){
+            const cfg = monthConfig[month];
+            let goldNum = basePoint;
+            if(diceColor === cfg.bonusColor){
+                switch(cfg.op){
+                    case '×2': goldNum *= 2; break;
+                    case '+2': goldNum += 2; break;
+                    case '-2': goldNum -= 2; break;
+                }
+            }
+            const hasColorBonus = document.querySelectorAll('.effect-box')[3].classList.contains('effect-box-active');
+            const currentMonthColor = bgToColor[cfg.bg];
+            if(hasColorBonus && diceColor === currentMonthColor){
+                goldNum += 2;
+            }
+            return Math.max(goldNum, 0);
+        }
+
+function sellLandDice(land, diceEl){
+    if (gameOver || gameFinish) return;
+    if(canUpgradeDice){
+        cancelUpgradeMode();
+        return;
+    }
+    const point = parseInt(diceEl.dataset.point);
+    const color = diceEl.dataset.color;
+    if(point <= 1) return;
+    if(color === 'white' || color === 'purple') return;
+
+    const getGold = calcSellGold(point, color);
+    gold += getGold;
+    land.innerHTML = '';
+    land.dataset.used = 'false';
+
+    const newDice = createDiceEl(color, 1);
+    // 👇 修复核心：自动判断设备，绑定对应交互事件
+    isMobileDevice ? bindDiceMobileClick(newDice) : bindDiceDrag(newDice);
+    document.getElementById(colorToContainer[color]).appendChild(newDice);
+    
+    consumeAction();
+    updateGoldUI();
+}
+
+        function upgradeDicePoint(land, diceEl){
+            if (gameOver || gameFinish || !canUpgradeDice) return;
+            const point = parseInt(diceEl.dataset.point);
+            if(point >= 6) return;
+            updateDicePoint(diceEl, point + 1);
+            cancelUpgradeMode();
+        }
+
+        function cancelUpgradeMode(){
+            const wasInUpgradeMode = canUpgradeDice;
+            canUpgradeDice = false;
+            document.querySelectorAll('.land .dice').forEach(dice => {
+                dice.classList.remove('upgradeable');
+            });
+            updateBtnText();
+            if (wasInUpgradeMode && currentActions === maxActions && !gameOver && !gameFinish) {
+                setTimeout(() => goToNextMonth(), 300);
+            }
+            if (wasInUpgradeMode && !gameOver && !gameFinish) {
+                checkGameOver();
+            }
+            saveGameState();
+        }
+
+        function getPrice(type){
+            const cfg = monthConfig[currentMonth];
+            if(cfg.action === type){
+                if(cfg.tag === 'green') return 0;
+                if(cfg.tag === 'red') return basePrice[type] * 2;
+            }
+            return basePrice[type];
+        }
+
+        function updateBtnText(){
+            if(gameFinish){
+                btnWater.disabled = true;
+                btnBug.disabled = true;
+                btnFertilize.disabled = true;
+                btnUnlock.disabled = true;
+                return;
+            }
+            let pWater = getPrice('water');
+            btnWater.querySelector('.small-price').textContent = pWater === 0 ? '免费' : `${pWater}金币`;
+            btnWater.disabled = gameOver || gold < pWater || currentActions >= maxActions || canUpgradeDice;
+
+            let pBug = getPrice('bug');
+            btnBug.querySelector('.small-price').textContent = pBug === 0 ? '免费' : `${pBug}金币`;
+            btnBug.disabled = gameOver || gold < pBug || currentActions >= maxActions || canUpgradeDice;
+
+            let pFer = getPrice('fertilize');
+            btnFertilize.querySelector('.small-price').textContent = pFer === 0 ? '免费' : `${pFer}金币`;
+            btnFertilize.disabled = gameOver || gold < pFer || currentActions >= maxActions || canUpgradeDice;
+
+            btnUnlock.disabled = gameOver || gold < 20 || nextUnlockIndex > 7 || currentActions >= maxActions || canUpgradeDice;
+        }
+
+        function renderMonthBonus() {
+            const cfg = monthConfig[currentMonth];
+            const block = document.createElement('div');
+            block.className = `bonus-block block-${cfg.bonusColor}`;
+            monthBonus.innerHTML = '';
+            monthBonus.append(block, cfg.op);
+        }
+
+        function updateMonthUI() {
+            const cfg = monthConfig[currentMonth];
+            monthBox.className = 'month-box ' + cfg.bg;
+            yearMonthText.textContent = `第${currentYear}年${currentMonth}月`;
+            monthTag.className = `month-tag tag-${cfg.tag}`;
+            monthTag.textContent = cfg.text;
+            renderMonthBonus();
+            updateGoldUI();
+        }
+
+        function updateGoldUI() { goldNumEl.textContent = gold; updateBtnText(); saveGameState(); }
+
+        function finalScoreSettle(nextM) {
+            allLands.forEach(land => {
+                if(land.dataset.used === 'true') {
+                    const dice = land.querySelector('.dice');
+                    if(!dice) return;
+                    const point = parseInt(dice.dataset.point);
+                    const color = dice.dataset.color;
+                    if(color === 'white' || color === 'purple') return;
+                    const gain = calcSellGold(point, color, nextM);
+                    gold += gain;
+                    land.innerHTML = '';
+                    land.dataset.used = 'false';
+                }
+            });
+
+            gameFinish = true;
+            addRankRecord(true); // 胜利记录排行榜
+            updateGoldUI();
+
+            const unlockLandNum = nextUnlockIndex - 4;
+            scoreLand.innerText = `已解锁土地：${unlockLandNum} / 4`;
+            scoreRed.innerText = `红色骰子种植：${plantCount.red} 次`;
+            scoreYellow.innerText = `黄色骰子种植：${plantCount.yellow} 次`;
+            scoreBlue.innerText = `蓝色骰子种植：${plantCount.blue} 次`;
+            scoreGreen.innerText = `绿色骰子种植：${plantCount.green} 次`;
+            scoreGold.innerText = `当前金币：${gold}`;
+            scoreFinal.innerText = `最终分数：${gold}`;
+
+            scoreModalOverlay.style.display = 'flex';
+            saveGameState();
+        }
+
+        function goToNextMonth() {
+            if (gameOver || gameFinish) return;
+            cancelUpgradeMode();
+
+            let nextMonth = currentMonth + 1;
+            let nextYear = currentYear;
+            if(nextMonth > 12) { nextMonth = 1; nextYear++; }
+            const nextMonthColor = bgToColor[monthConfig[nextMonth].bg];
+
+            if(currentYear === 3 && currentMonth === 12){
+                currentMonth = nextMonth;
+                currentYear = nextYear;
+                finalScoreSettle(nextMonth);
+                return;
+            }
+
+            const hasCurUnmetNeed = !currentNeedBox.classList.contains('hide-need');
+            clearCurrentNeed();
+
+            updateDicePoint(whiteDiceEl, getRandom1To6());
+            updateDicePoint(purpleDiceEl, getRandom1To6());
+
+            allLands.forEach(land => {
+                if(land.dataset.used === 'true') {
+                    const dice = land.querySelector('.dice');
+                    if(!dice) return;
+                    let nowPoint = parseInt(dice.dataset.point);
+                    if(hasCurUnmetNeed){
+                        nowPoint = Math.max(nowPoint - 1, 1);
+                    }else{
+                        nowPoint += 1;
+                        if(dice.dataset.color === nextMonthColor) nowPoint += 1;
+                        nowPoint = Math.min(nowPoint, 6);
+                    }
+                    updateDicePoint(dice, nowPoint);
+                }
+            });
+
+            currentMonth = nextMonth;
+            currentYear = nextYear;
+            currentActions = 0;
+            updateMonthUI();
+            updateActionCounter();
+            refreshYearNeed();
+            checkGameOver();
+            saveGameState();
+        }
+
+        function createDiceEl(color, point = 1, draggable = true) {
+            const dice = document.createElement('div');
+            dice.className = `dice dice-${color}`;
+            dice.dataset.point = point;
+            dice.dataset.color = color;
+            if(!draggable) dice.classList.add('fixed-dice');
+            else dice.setAttribute('draggable', 'true');
+            for(let i = 0; i < 9; i++) {
+                const span = document.createElement('span');
+                span.className = dotPos[point].includes(i) ? 'dot' : 'dot-empty';
+                dice.appendChild(span);
+            }
+            return dice;
+        }
+
+        function initFixedDice() {
+            const wrap = document.getElementById('fixedDice');
+            whiteDiceEl = createDiceEl('white', getRandom1To6(), false);
+            const discountTag = document.createElement('span');
+            discountTag.className = 'price-discount';
+            discountTag.textContent = '-1';
+            whiteDiceEl.appendChild(discountTag);
+            purpleDiceEl = createDiceEl('purple', getRandom1To6(), false);
+            wrap.append(whiteDiceEl, purpleDiceEl);
+        }
+
+function initSupplyDice() {
+    diceConfig.forEach(({color, count, container}) => {
+        const row = document.getElementById(container);
+        for(let i = 0; i < count; i++) {
+            const d = createDiceEl(color, 1);
+            row.appendChild(d);
+            // 👇 核心：设备自动切换绑定
+            isMobileDevice ? bindDiceMobileClick(d) : bindDiceDrag(d);
+        }
+    });
+}
+
+function initLand() {
+    const wrap = document.getElementById('landGrid');
+    allLands = [];
+    for(let i = 0; i < 4; i++) {
+        const land = document.createElement('div');
+        land.className = 'land land-open';
+        land.dataset.used = 'false';
+        land.dataset.lock = 'false';
+        wrap.appendChild(land);
+        // 👇 自动切换
+        isMobileDevice ? bindLandMobileClick(land) : bindLandDrop(land);
+        allLands.push(land);
+    }
+    for(let i = 0; i < 4; i++) {
+        const land = document.createElement('div');
+        land.className = 'land land-lock';
+        land.dataset.used = 'false';
+        land.dataset.lock = 'true';
+        wrap.appendChild(land);
+        // 👇 自动切换
+        isMobileDevice ? bindLandMobileClick(land) : bindLandDrop(land);
+        allLands.push(land);
+    }
+}
+
+function unlockOneLand() {
+    if (gameOver || gameFinish) return;
+    if (currentActions >= maxActions) return;
+    if (nextUnlockIndex > 7 || gold < 20) return;
+    gold -= 20;
+    const land = allLands[nextUnlockIndex];
+    land.classList.remove('land-lock');
+    land.classList.add('land-unlocked');
+    land.dataset.lock = 'false';
+    // 👇 自动切换绑定
+    isMobileDevice ? bindLandMobileClick(land) : bindLandDrop(land);
+
+    const effectBoxes = document.querySelectorAll('.effect-box');
+    const activeIndex = nextUnlockIndex - 4;
+    if (activeIndex < effectBoxes.length) {
+        effectBoxes[activeIndex].classList.add('effect-box-active');
+        if (activeIndex === 0) {
+            document.querySelector('.price-discount').style.display = 'block';
+        }
+        if (activeIndex === 1) {
+            maxActions = 4;
+            updateActionCounter();
+        }
+    }
+    nextUnlockIndex++;
+    consumeAction();
+    updateGoldUI();
+}
+
+        function bindDiceDrag(dice) {
+            dice.addEventListener('dragstart', e => {
+                if(gameOver || gameFinish || isDragging || currentActions >= maxActions || canUpgradeDice) return;
+                isDragging = true;
+                dice.classList.add('dragging');
+                e.dataTransfer.setData('color', dice.dataset.color);
+                e.dataTransfer.setData('point', dice.dataset.point);
+                dice.id = 'dragDice';
+            });
+            dice.addEventListener('dragend', () => {
+                isDragging = false;
+                dice.classList.remove('dragging');
+                dice.id = '';
+            });
+        }
+
+        function bindLandDrop(land) {
+            land.addEventListener('dragover', e => e.preventDefault());
+            land.addEventListener('drop', e => {
+                if (gameOver || gameFinish || canUpgradeDice) return;
+                e.preventDefault();
+                if(land.dataset.lock === 'true' || land.dataset.used === 'true' || currentActions >= maxActions) return;
+
+                const baseCost = parseInt(whiteDiceEl.dataset.point);
+                const hasDiscount = document.querySelectorAll('.effect-box')[0].classList.contains('effect-box-active');
+                const cost = hasDiscount ? Math.max(baseCost - 1, 1) : baseCost;
+                if(gold < cost) return;
+                gold -= cost;
+
+                const color = e.dataTransfer.getData('color');
+                const point = parseInt(e.dataTransfer.getData('point'));
+
+                plantCount[color]++;
+                const newDice = createDiceEl(color, point, false);
+                land.innerHTML = '';
+                land.appendChild(newDice);
+                land.dataset.used = 'true';
+                newDice.onclick = () => {
+                    if(canUpgradeDice){
+                        upgradeDicePoint(land, newDice);
+                    }else{
+                        sellLandDice(land, newDice);
+                    }
+                };
+                document.getElementById('dragDice')?.remove();
+
+                consumeAction();
+                updateGoldUI();
+            });
+        }
+
+// ======================
+// 【桌面端原生拖拽 - 完全保留】
+// ======================
+function bindDiceDrag(dice) {
+    dice.addEventListener('dragstart', e => {
+        if(gameOver || gameFinish || isDragging || currentActions >= maxActions || canUpgradeDice) return;
+        isDragging = true;
+        dice.classList.add('dragging');
+        e.dataTransfer.setData('color', dice.dataset.color);
+        e.dataTransfer.setData('point', dice.dataset.point);
+        dice.id = 'dragDice';
+    });
+    dice.addEventListener('dragend', () => {
+        isDragging = false;
+        dice.classList.remove('dragging');
+        dice.id = '';
+    });
+}
+function bindLandDrop(land) {
+    land.addEventListener('dragover', e => e.preventDefault());
+    land.addEventListener('drop', e => {
+        if (gameOver || gameFinish || canUpgradeDice) return;
+        e.preventDefault();
+        if(land.dataset.lock === 'true' || land.dataset.used === 'true' || currentActions >= maxActions) return;
+
+        const baseCost = parseInt(whiteDiceEl.dataset.point);
+        const hasDiscount = document.querySelectorAll('.effect-box')[0].classList.contains('effect-box-active');
+        const cost = hasDiscount ? Math.max(baseCost - 1, 1) : baseCost;
+        if(gold < cost) return;
+        gold -= cost;
+
+        const color = e.dataTransfer.getData('color');
+        const point = parseInt(e.dataTransfer.getData('point'));
+
+        plantCount[color]++;
+        const newDice = createDiceEl(color, point, false);
+        land.innerHTML = '';
+        land.appendChild(newDice);
+        land.dataset.used = 'true';
+        newDice.onclick = () => {
+            if(canUpgradeDice){
+                upgradeDicePoint(land, newDice);
+            }else{
+                sellLandDice(land, newDice);
+            }
+        };
+        document.getElementById('dragDice')?.remove();
+
+        consumeAction();
+        updateGoldUI();
+    });
+}
+
+// ======================
+// 【移动端点击交互 - 新增】
+// ======================
+// 移动端骰子点击选中
+function bindDiceMobileClick(dice) {
+    dice.setAttribute('draggable', 'false'); // 移动端禁用拖拽
+    dice.addEventListener('click', () => {
+        if(gameOver || gameFinish || currentActions >= maxActions || canUpgradeDice) return;
+        
+        // 清除上一个选中状态
+        if(selectedDice) {
+            selectedDice.style.transform = '';
+            selectedDice.style.boxShadow = '';
+        }
+        // 选中当前骰子
+        selectedDice = dice;
+        dice.style.transform = 'scale(1.1)';
+        dice.style.boxShadow = '0 0 10px #ffd700';
+    });
+}
+// 移动端土地点击种植
+function bindLandMobileClick(land) {
+    land.addEventListener('click', () => {
+        if (!selectedDice || gameOver || gameFinish || canUpgradeDice) return;
+        if(land.dataset.lock === 'true' || land.dataset.used === 'true' || currentActions >= maxActions) return;
+
+        const baseCost = parseInt(whiteDiceEl.dataset.point);
+        const hasDiscount = document.querySelectorAll('.effect-box')[0].classList.contains('effect-box-active');
+        const cost = hasDiscount ? Math.max(baseCost - 1, 1) : baseCost;
+        if(gold < cost) return;
+        gold -= cost;
+
+        const color = selectedDice.dataset.color;
+        const point = parseInt(selectedDice.dataset.point);
+
+        plantCount[color]++;
+        const newDice = createDiceEl(color, point, false);
+        land.innerHTML = '';
+        land.appendChild(newDice);
+        land.dataset.used = 'true';
+        newDice.onclick = () => {
+            canUpgradeDice ? upgradeDicePoint(land, newDice) : sellLandDice(land, newDice);
+        };
+
+        // 清除选中
+        selectedDice.remove();
+        selectedDice = null;
+
+        consumeAction();
+        updateGoldUI();
+    });
+}
+
+        function bindButtons() {
+            function doFarmAction(type) {
+                if (gameOver || gameFinish || canUpgradeDice) return;
+                const p = getPrice(type);
+                if(gold >= p && currentActions < maxActions){
+                    gold -= p;
+                    updateGoldUI();
+                    if(nowNeedType === type) {
+                        clearCurrentNeed();
+                    } else {
+                        const hasUpgradeEffect = document.querySelectorAll('.effect-box')[2].classList.contains('effect-box-active');
+                        if(hasUpgradeEffect){
+                            let hasUpgradeableDice = false;
+                            document.querySelectorAll('.land .dice').forEach(dice => {
+                                const point = parseInt(dice.dataset.point);
+                                if(point < 6){
+                                    dice.classList.add('upgradeable');
+                                    hasUpgradeableDice = true;
+                                }
+                            });
+                            if(hasUpgradeableDice){
+                                canUpgradeDice = true;
+                                updateBtnText();
+                            }
+                        }
+                    }
+                    consumeAction();
+                }
+            }
+            btnWater.onclick = () => doFarmAction('water');
+            btnBug.onclick = () => doFarmAction('bug');
+            btnFertilize.onclick = () => doFarmAction('fertilize');
+            btnUnlock.onclick = unlockOneLand;
+            btnNextMonth.onclick = null;
+            restartBtn.onclick = restartGame;
+            scoreRestartBtn.onclick = restartGame;
+        }
+
+        function restartGame() {
+            gold = 20;
+            nextUnlockIndex = 4;
+            currentYear = 1;
+            currentMonth = 1;
+            isDragging = false;
+            gameOver = false;
+            gameFinish = false;
+            currentActions = 0;
+            maxActions = 3;
+            nowNeedType = '';
+            canUpgradeDice = false;
+selectedDice = null; 
+            plantCount = { red:0, yellow:0, blue:0, green:0 };
+
+            gameOverModal.style.display = 'none';
+            scoreModalOverlay.style.display = 'none';
+            closeMonthModalFunc();
+
+            document.getElementById('landGrid').innerHTML = '';
+            document.getElementById('diceRowRed').innerHTML = '';
+            document.getElementById('diceRowYellow').innerHTML = '';
+            document.getElementById('diceRowBlue').innerHTML = '';
+            document.getElementById('diceRowGreen').innerHTML = '';
+            document.getElementById('fixedDice').innerHTML = '';
+
+            const effectBoxes = document.querySelectorAll('.effect-box');
+            effectBoxes.forEach(box => box.classList.remove('effect-box-active'));
+
+            initFixedDice();
+            initSupplyDice();
+            initLand();
+            updateMonthUI();
+            refreshYearNeed();
+            renderTipDice();
+            updateActionCounter();
+            updateGoldUI();
+            saveGameState();
+        }
+
+        function openMonthModal() {
+            if(gameOver || gameFinish) return;
+            renderMonthList();
+            monthModalOverlay.style.display = 'flex';
+        }
+        function closeMonthModalFunc() {
+            monthModalOverlay.style.display = 'none';
+            monthList.innerHTML = '';
+        }
+        function renderMonthList() {
+            monthList.innerHTML = '';
+            for(let m = 1; m <= 12; m++) {
+                const cfg = monthConfig[m];
+                const monthItem = document.createElement('div');
+                monthItem.className = `month-item ${cfg.bg}`;
+                const nameEl = document.createElement('div');
+                nameEl.className = 'month-item-name';
+                nameEl.textContent = `${m}月`;
+                const tagEl = document.createElement('div');
+                tagEl.className = `month-item-tag tag-${cfg.tag}`;
+                tagEl.textContent = cfg.text;
+                const bonusEl = document.createElement('div');
+                bonusEl.className = 'month-item-bonus';
+                const bonusBlock = document.createElement('div');
+                bonusBlock.className = `bonus-block block-${cfg.bonusColor}`;
+                bonusEl.append(bonusBlock, cfg.op);
+                monthItem.append(nameEl, tagEl, bonusEl);
+                monthList.appendChild(monthItem);
+            }
+        }
+
+        // ============== 新增：绑定排行榜按钮 ==============
+        document.getElementById('rankBtn').onclick = () => {
+            renderRankList();
+            document.getElementById('rankModalOverlay').style.display = 'flex';
+        };
+        document.getElementById('closeRankModal').onclick = () => {
+            document.getElementById('rankModalOverlay').style.display = 'none';
+        };
+        document.getElementById('rankModalOverlay').onclick = (e) => {
+            if(e.target === document.getElementById('rankModalOverlay')){
+                document.getElementById('rankModalOverlay').style.display = 'none';
+            }
+        };
+
+        function initGame() {
+            loadGameState(); // 加载缓存
+            initFixedDice();
+            initSupplyDice();
+            initLand();
+            bindButtons();
+            updateMonthUI();
+            refreshYearNeed();
+            renderTipDice();
+            updateActionCounter();
+
+            monthBox.addEventListener('click', openMonthModal);
+            closeMonthModal.addEventListener('click', closeMonthModalFunc);
+            monthModalOverlay.addEventListener('click', (e) => {
+                if(e.target === monthModalOverlay) closeMonthModalFunc();
+            });
+        }
+        initGame();
+        // 控制移动端规则显示
+        function isMobile() { return window.innerWidth <= 768; }
+        function toggleMobileRule() {
+          const rule = document.querySelector('.rule-row-mobile');
+          rule.style.display = isMobile() ? 'flex' : 'none';
+        }
+        toggleMobileRule();
+        window.addEventListener('resize', toggleMobileRule);
+    </script>
+</body>
+</html>
